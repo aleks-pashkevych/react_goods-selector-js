@@ -16,9 +16,22 @@ export const goods = [
 ];
 
 export const App = () => {
-  const [selectedGood, setSelectedGood] = useState('Jam');
+  const [selectedGood, setSelectedGood] = useState('Jam is');
+  const [btnShow, setBtnShow] = useState({ display: 'block' });
+  const item = selectedGood === '' ? 'No goods' : `${selectedGood}`;
+  const noItems = () => {
+    setBtnShow({ display: 'none' });
+    setSelectedGood('');
+  };
 
-  const item = selectedGood === '' ? 'No goods is' : `${selectedGood}`;
+  const btnAction = (btn, good) => {
+    if (btn === 'AddButton') {
+      setSelectedGood(good);
+      setBtnShow({ display: 'block' });
+    } else {
+      noItems();
+    }
+  };
 
   return (
     <main className="section container">
@@ -27,26 +40,28 @@ export const App = () => {
         <button
           data-cy="ClearButton"
           type="button"
-          className="delete ml-3"
-          onClick={() => setSelectedGood('')}
+          className="delete"
+          style={btnShow}
+          onClick={noItems}
         />
       </h1>
       <table className="table">
         <tbody>
-          {goods.map(el => {
-            const val = el === item ? '-' : '+';
+          {goods.map(good => {
+            const val = good === item ? '-' : '+';
+            const stl = val === '-' ? `has-background-success-light` : ``;
+            const remove = val === '+' ? 'AddButton' : 'RemoveButton';
+            const isInfo = val === '-' ? 'is-info' : '';
 
             return (
-              <tr data-cy="Good">
+              <tr data-cy="Good" className={`${stl}`}>
                 <td>
                   <button
-                    data-cy="AddButton"
+                    data-cy={remove}
                     type="button"
-                    className="button"
+                    className={`button ${isInfo}`}
                     onClick={() => {
-                      setSelectedGood(el);
-
-                      // setBtn({ val });
+                      btnAction(remove, good);
                     }}
                   >
                     {val}
@@ -54,7 +69,7 @@ export const App = () => {
                 </td>
 
                 <td data-cy="GoodTitle" className="is-vcentered">
-                  {el}
+                  {good}
                 </td>
               </tr>
             );
