@@ -67,12 +67,10 @@ export const App = () => {
 
             const btnAction = () => {
               if (remove === 'AddButton' && !isPressed) {
-                // setIsPressed(true);
                 setSelectedGood(good);
                 setBtnLbl('-');
                 setRemove('RemoveButton');
               } else {
-                // isPressed = false;
                 setSelectedGood('');
                 setBtnLbl('+');
                 setRemove('AddButton');
