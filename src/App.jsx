@@ -16,27 +16,25 @@ export const goods = [
 ];
 
 export const App = () => {
-  const [selectedGood, setSelectedGood] = useState('Jam is');
+  const [selectedGood, setSelectedGood] = useState('Jam');
   const [btnShow, setBtnShow] = useState({ display: 'block' });
-  const item = selectedGood === '' ? 'No goods' : `${selectedGood}`;
+  const [isPressed, setIsPressed] = useState(false);
+  const item = selectedGood === '' ? '' : ` ${selectedGood}`;
+  const itemToShow = el => {
+    if (el === '') return 'No goods selected';
+
+    return `${item} is selected`;
+  };
+
   const noItems = () => {
     setBtnShow({ display: 'none' });
     setSelectedGood('');
   };
 
-  const btnAction = (btn, good) => {
-    if (btn === 'AddButton') {
-      setSelectedGood(good);
-      setBtnShow({ display: 'block' });
-    } else {
-      noItems();
-    }
-  };
-
   return (
     <main className="section container">
       <h1 className="title is-flex is-align-items-center">
-        {item} selected
+        {itemToShow(item)}
         <button
           data-cy="ClearButton"
           type="button"
@@ -48,23 +46,52 @@ export const App = () => {
       <table className="table">
         <tbody>
           {goods.map(good => {
-            const val = good === item ? '-' : '+';
-            const stl = val === '-' ? `has-background-success-light` : ``;
-            const remove = val === '+' ? 'AddButton' : 'RemoveButton';
-            const isInfo = val === '-' ? 'is-info' : '';
+            const [btnLbl, setBtnLbl] = useState('+');
+            const [remove, setRemove] = useState('AddButton');
+            let val = '+';
+            const stl = btnLbl === '-' ? `has-background-success-light` : ``;
+            const isInfo = btnLbl === '-' ? 'is-info' : '';
+            const btnLblShow = () => {
+              if (val === '+' && isPressed === false) {
+                setIsPressed(true);
+                val = '-';
+                setBtnLbl('-');
+              } else {
+                val = '+';
+                setBtnLbl('+');
+                setIsPressed(false);
+              }
+
+              setBtnLbl(val);
+            };
+
+            const btnAction = () => {
+              if (remove === 'AddButton' && !isPressed) {
+                // setIsPressed(true);
+                setSelectedGood(good);
+                setBtnLbl('-');
+                setRemove('RemoveButton');
+              } else {
+                // isPressed = false;
+                setSelectedGood('');
+                setBtnLbl('+');
+                setRemove('AddButton');
+              }
+            };
 
             return (
-              <tr data-cy="Good" className={`${stl}`}>
+              <tr key={good} data-cy="Good" className={stl}>
                 <td>
                   <button
                     data-cy={remove}
                     type="button"
                     className={`button ${isInfo}`}
                     onClick={() => {
-                      btnAction(remove, good);
+                      btnAction();
+                      btnLblShow();
                     }}
                   >
-                    {val}
+                    {btnLbl}
                   </button>
                 </td>
 
